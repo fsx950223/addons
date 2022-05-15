@@ -15,7 +15,7 @@ limitations under the License.
 
 #define EIGEN_USE_THREADS
 
-#if GOOGLE_CUDA
+#if GOOGLE_CUDA || TENSORFLOW_USE_ROCM
 #define EIGEN_USE_GPU
 #endif  // GOOGLE_CUDA
 
@@ -277,7 +277,7 @@ REGISTER_CPU_KERNEL(float);
 REGISTER_CPU_KERNEL(double);
 #undef REGISTER_CPU_KERNEL
 
-#if GOOGLE_CUDA
+#if GOOGLE_CUDA || TENSORFLOW_USE_ROCM
 namespace functor {
 // Forward declarations of the functor specializations for GPU.
 #define DECLARE_GPU_SPEC(T, Tindices)                                         \

@@ -55,7 +55,7 @@ _DEFAULT_CUDA_COMPUTE_CAPABILITIES = [
     "5.2",
 ]
 
-def _get_python_bin(repository_ctx):
+def get_python_bin(repository_ctx):
     """Gets the python bin path."""
     python_bin = repository_ctx.os.environ.get(_PYTHON_BIN_PATH)
     if python_bin != None:
@@ -124,7 +124,7 @@ def _get_win_cuda_defines(repository_ctx):
         ),
     )
 
-    msvc_cl_path = _get_python_bin(repository_ctx)
+    msvc_cl_path = get_python_bin(repository_ctx)
     msvc_ml_path = find_msvc_tool(repository_ctx, vc_path, "ml64.exe").replace(
         "\\",
         "/",
@@ -1072,7 +1072,7 @@ def _create_local_cuda_repository(repository_ctx):
 def find_cuda_config(repository_ctx, cuda_libraries):
     """Returns CUDA config dictionary from running find_cuda_config.py"""
     exec_result = repository_ctx.execute([
-        _get_python_bin(repository_ctx),
+        get_python_bin(repository_ctx),
         repository_ctx.path(Label("//build_deps/toolchains/gpu:find_cuda_config.py")),
     ] + cuda_libraries)
     if exec_result.return_code:

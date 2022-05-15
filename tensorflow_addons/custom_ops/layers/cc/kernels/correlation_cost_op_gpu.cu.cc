@@ -13,11 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#if GOOGLE_CUDA
+#if GOOGLE_CUDA || TENSORFLOW_USE_ROCM
 
 #define EIGEN_USE_GPU
 
-#include "gpu/cub/device/device_reduce.cuh"
+#ifdef GOOGLE_CUDA
+  #include "gpu/cub/device/device_reduce.cuh"
+#else
+  #include "rocm/include/hipcub/hipcub.hpp"
+#endif
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/util/gpu_kernel_helper.h"

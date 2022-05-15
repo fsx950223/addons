@@ -1,6 +1,7 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//build_deps/tf_dependency:tf_configure.bzl", "tf_configure")
 load("//build_deps/toolchains/gpu:cuda_configure.bzl", "cuda_configure")
+load("//build_deps/toolchains/gpu:rocm_configure.bzl", "rocm_configure")
 
 http_archive(
     name = "cub_archive",
@@ -13,8 +14,20 @@ http_archive(
     ],
 )
 
+http_archive(
+    name = "bazel_skylib",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
+    ],
+    sha256 = "f7be3474d42aae265405a592bb7da8e171919d74c16f082a5457840f06054728",
+)
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+bazel_skylib_workspace()
+
 tf_configure(
     name = "local_config_tf",
 )
 
 cuda_configure(name = "local_config_cuda")
+rocm_configure(name = "local_config_rocm")

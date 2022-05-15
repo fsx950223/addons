@@ -15,7 +15,7 @@ limitations under the License.
 
 #define EIGEN_USE_THREADS
 
-#if GOOGLE_CUDA
+#if GOOGLE_CUDA || TENSORFLOW_USE_ROCM
 #define EIGEN_USE_GPU
 #endif  // GOOGLE_CUDA
 
@@ -360,7 +360,7 @@ TF_CALL_float(REGISTER_CORRELATIONCOST_OP_CPU);
 #undef REGISTER_CORRELATIONCOST_OP_CPU
 
 // Register the GPU kernels.
-#if GOOGLE_CUDA
+#if GOOGLE_CUDA || TENSORFLOW_USE_ROCM
 
 #define REGISTER_CORRELATIONCOST_OP_GPU(T)                   \
   REGISTER_KERNEL_BUILDER(Name("Addons>CorrelationCost")     \

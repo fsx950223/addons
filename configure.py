@@ -136,11 +136,6 @@ def create_build_configuration():
     write("build --strategy=Genrule=standalone")
     write("build -c opt")
 
-    if Version(tf.__version__) >= Version("2.9.0"):
-        glibcxx = '"-D_GLIBCXX_USE_CXX11_ABI=1"'
-    else:
-        glibcxx = '"-D_GLIBCXX_USE_CXX11_ABI=0"'
-
     if is_windows():
         write("build --config=windows")
         write("build:windows --enable_runfiles")
@@ -160,6 +155,9 @@ def create_build_configuration():
     if os.getenv("TF_NEED_CUDA", "0") == "1":
         print("> Building GPU & CPU ops")
         configure_cuda()
+    elif os.getenv("TF_NEED_ROCM", "0") == "1":
+        print("> Building ROCM GPU & CPU ops")
+        configure_rocm()
     else:
         print("> Building only CPU ops")
 
@@ -184,6 +182,18 @@ def configure_cuda():
     write("build --config=cuda")
     write("build:cuda --define=using_cuda=true --define=using_cuda_nvcc=true")
     write("build:cuda --crosstool_top=@local_config_cuda//crosstool:toolchain")
+
+def configure_rocm():
+  write_action_env("TF_NEED_ROCM", "1")
+  write_action_env("ROCM_PATH",
+                   os.path.realpath(os.getenv("ROCM_PATH", "/opt/rocm")))
+
+  write("test --config=rocm")
+  write("build --config=rocm")
+  write("build:rocm --define=using_rocm=true --define=using_rocm_hipcc=true")
+  write("build:rocm --define=tensorflow_mkldnn_contraction_kernel=0")
+  write("build:rocm --repo_env TF_NEED_ROCM=1")
+  write("build:rocm --crosstool_top=@local_config_rocm//crosstool:toolchain")
 
 
 if __name__ == "__main__":
